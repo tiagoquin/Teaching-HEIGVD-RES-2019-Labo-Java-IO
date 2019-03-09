@@ -94,6 +94,8 @@ public class Application implements IApplication {
       for (String tag : quote.getTags()) {
         LOG.info("> " + tag);
       }
+
+      storeQuote(quote, WORKSPACE_DIRECTORY); // Storing the quote, this was the missing line
     }
   }
   
