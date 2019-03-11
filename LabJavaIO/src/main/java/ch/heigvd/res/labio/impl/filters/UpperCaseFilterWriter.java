@@ -33,7 +33,7 @@ public class UpperCaseFilterWriter extends FilterWriter {
     if (off < 0 || off + len > cbuf.length) throw new IllegalArgumentException();
 
 
-    for (int i = off; i < off + len && i < toString().length(); ++i) {
+    for (int i = off; i < off + len && i < cbuf.length; ++i) {
 
       write(cbuf[i]);
     }
