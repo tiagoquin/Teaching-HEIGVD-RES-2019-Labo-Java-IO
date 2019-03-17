@@ -19,7 +19,7 @@ public class FileNumberingFilterWriter extends FilterWriter {
 
   private static final Logger LOG = Logger.getLogger(FileNumberingFilterWriter.class.getName());
 
-  private int lineCount = 0;
+  private int lineCount = 1;
   private boolean previousCarriage;
 
   public FileNumberingFilterWriter(Writer out) {
@@ -28,32 +28,18 @@ public class FileNumberingFilterWriter extends FilterWriter {
 
   @Override
   public void write(String str, int off, int len) throws IOException {
-    //throw new UnsupportedOperationException("The student has not implemented this method yet.");
 
-    if (off < 0 || off + len > str.length()) throw new IllegalArgumentException();
-
-    for (int i = off; i < off + len && i < str.length(); ++i) {
-      write(str.charAt(i));
-    }
-
-    if (previousCarriage) {
-      for (char cara : Integer.toString(lineCount++).toCharArray()) {
-        super.write(cara);
-      }
-
-      super.write('\t');
-      previousCarriage = false;
-    }
+    write(str.toCharArray(),off,len); //Calls write with CharArray
   }
 
   @Override
   public void write(char[] cbuf, int off, int len) throws IOException {
-    //throw new UnsupportedOperationException("The student has not implemented this method yet.");
 
-    if (off < 0 || off + len > cbuf.length) throw new IllegalArgumentException();
+    if (off < 0 || off + len > cbuf.length) {
+      throw new IllegalArgumentException();
+    }
 
-
-    for (int i = off; i < off + len && i < toString().length(); ++i) {
+    for (int i = off; i < off + len; ++i) {
 
       write(cbuf[i]);
     }
@@ -70,14 +56,9 @@ public class FileNumberingFilterWriter extends FilterWriter {
 
   @Override
   public void write(int c) throws IOException {
-    //throw new UnsupportedOperationException("The student has not implemented this method yet.");
 
-    // TODO: 15.03.19 make it beautiful
-
-    if (lineCount == 0) {
-      super.write('1');
-      super.write('\t');
-      lineCount += 2;
+    if (lineCount == 1) {
+      newLine();
 
       super.write(c);
     } else if (c == '\n') {
@@ -85,11 +66,7 @@ public class FileNumberingFilterWriter extends FilterWriter {
       previousCarriage = false;
       super.write(c);
 
-      for (char cara : Integer.toString(lineCount++).toCharArray()) {
-        super.write(cara);
-      }
-
-      super.write('\t');
+      newLine();
 
 
     } else if (c == '\r') {
@@ -101,16 +78,24 @@ public class FileNumberingFilterWriter extends FilterWriter {
 
       previousCarriage = false;
 
-      for (char cara : Integer.toString(lineCount++).toCharArray()) {
-        super.write(cara);
-      }
+      newLine();
 
-      super.write('\t');
       super.write(c);
     } else {
       super.write(c);
     }
 
+  }
+
+  /**
+   * Write "n\t" where n is the lineCount
+   * @throws IOException
+   */
+  public void newLine() throws IOException {
+    for (char cara : Integer.toString(lineCount++).toCharArray()) {
+      write(cara);
+    }
+    write('\t');
   }
 }
 
